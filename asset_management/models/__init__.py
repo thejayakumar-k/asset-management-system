@@ -22,8 +22,10 @@ from . import network_device_interface
 from . import snmp_monitor
 from . import maintenance_request
 
-# Windows Update Management
+# OS Update Management
 from . import asset_windows_update
+from . import asset_linux_update
+from . import asset_macos_update
 
 # Antivirus Management (merged)
 from . import antivirus

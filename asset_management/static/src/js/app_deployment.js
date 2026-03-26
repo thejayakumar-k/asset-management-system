@@ -231,15 +231,17 @@ export class AppDeploymentDashboard extends Component {
                 }
 
                 try {
-                    const appGroups = await this.orm.readGroup(
+                    // Odoo 19 uses formattedReadGroup (replaces old readGroup)
+                    // aggregates: ["__count"] returns the group record count in g.__count
+                    const appGroups = await this.orm.formattedReadGroup(
                         "asset.installed.application",
                         [["asset_id", "in", assetIds]],
                         ["asset_id"],
-                        ["asset_id"]
+                        ["__count"]
                     );
                     appGroups.forEach(g => {
                         if (g.asset_id) {
-                            appCountByAsset[g.asset_id[0]] = g.asset_id_count;
+                            appCountByAsset[g.asset_id[0]] = g.__count || 0;
                         }
                     });
                 } catch (e) {

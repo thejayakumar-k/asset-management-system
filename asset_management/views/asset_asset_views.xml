@@ -898,14 +898,14 @@
                             </div>
                         </page>
 
-                        <page string="Storage &amp; File Control" name="storage_volumes">
+                        <page string="Storage" name="storage_volumes">
                             <div style="padding: 20px; background: #f8f9fa;">
                                 <!-- VISUAL DISK REPRESENTATION -->
                                 <div style="background: #ffffff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
                                     <div style="color: #1e293b; font-size: 13px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
                                         <i class="fa fa-hdd-o" style="margin-right: 8px; color: #3b82f6;"/>Devices and Drives
                                     </div>
-                                    
+
                                     <field name="storage_volume_ids" nolabel="1" mode="kanban">
                                         <kanban create="0" delete="0">
                                             <field name="drive_letter"/>
@@ -928,7 +928,7 @@
                                                                     <i class="fa fa-hdd-o" style="font-size: 48px; color: #64748b;"/>
                                                                 </t>
                                                             </div>
-                                                            
+
                                                             <!-- DISK INFO -->
                                                             <div style="flex: 1; min-width: 0;">
                                                                 <!-- Drive Name and Type -->
@@ -943,7 +943,7 @@
                                                                     </div>
                                                                     <field name="drive_label" widget="badge" readonly="1"/>
                                                                 </div>
-                                                                
+
                                                                 <!-- Health Status -->
                                                                 <div style="margin-bottom: 10px;">
                                                                     <field name="storage_status" widget="badge" readonly="1"
@@ -951,14 +951,14 @@
                                                                            decoration-warning="storage_status == 'warning'"
                                                                            decoration-danger="storage_status == 'critical'"/>
                                                                 </div>
-                                                                
+
                                                                 <!-- Storage Info -->
                                                                 <div style="color: #64748b; font-size: 12px; margin-bottom: 8px; line-height: 1.6;">
                                                                     <div><strong>Capacity:</strong> <t t-esc="record.total_size.value"/> GB</div>
                                                                     <div><strong>Used:</strong> <t t-esc="record.used_space.value"/> GB</div>
                                                                     <div><strong>Available:</strong> <t t-esc="record.free_space.value"/> GB</div>
                                                                 </div>
-                                                                
+
                                                                 <!-- Progress Bar -->
                                                                 <div style="background: #e2e8f0; height: 22px; border-radius: 4px; overflow: hidden; margin-bottom: 6px; position: relative; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);">
                                                                     <t t-set="usage_pct" t-value="record.usage_percentage.raw_value"/>
@@ -969,10 +969,10 @@
                                                                     <t t-elif="usage_pct &gt;= 75">
                                                                         <t t-set="bar_color" t-value="'#f59e0b'"/>
                                                                     </t>
-                                                                    
+
                                                                     <div t-attf-style="background: {{bar_color}}; height: 100%; width: {{usage_pct}}%; transition: width 0.3s ease; box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);"/>
                                                                 </div>
-                                                                
+
                                                                 <!-- Usage Percentage -->
                                                                 <div style="color: #64748b; font-size: 13px; font-weight: 600; text-align: center;">
                                                                     <t t-esc="record.usage_percentage.value"/>% Used
@@ -985,43 +985,17 @@
                                         </kanban>
                                     </field>
                                 </div>
-
-                                <!-- FILE EXPLORER INTEGRATION -->
-                                <div style="margin-top: 24px;">
-                                    <field name="file_access_record_ids" widget="file_access_widget" nolabel="1"/>
-                                </div>
                             </div>
                         </page>
 
-                        <page string="Installed Applications" class="installed_apps_page">
-                            <div class="asset_section_container">
-                                <div class="section_header">
-                                    <h3 class="section_title">
-                                        <i class="fa fa-th-large" title="Apps"></i>
-                                        <span>Installed Applications</span>
-                                    </h3>
-                                    <p class="section_subtitle">
-                                        Total applications: <field name="installed_application_count"/> apps
-                                    </p>
-                                </div>
-
-                                <div class="apps_container">
-                                    <!-- DETAILED LIST VIEW -->
-                                    <field name="installed_application_ids" nolabel="1">
-                                        <list string="Installed Applications"
-                                              editable="bottom"
-                                              create="0"
-                                              delete="0"
-                                              default_order="name"
-                                              class="compact_apps_list">
-                                            <field name="name" string="Name" required="1" class="text-start"/>
-                                            <field name="publisher" string="Publisher" optional="show" class="text-start"/>
-                                            <field name="installed_date_formatted" string="Installed On" class="text-center"/>
-                                            <field name="size" string="Size" optional="show" class="text-end"/>
-                                            <field name="version" string="Version" optional="show" class="text-start"/>
-
-                                        </list>
-                                    </field>
+                        <page string="File Access" name="file_access">
+                            <div style="padding: 20px; background: #f8f9fa;">
+                                <!-- FILE EXPLORER INTEGRATION -->
+                                <div style="background: #ffffff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+                                    <div style="color: #1e293b; font-size: 13px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px;">
+                                        <i class="fa fa-folder-open" style="margin-right: 8px; color: #3b82f6;"/>File Explorer
+                                    </div>
+                                    <field name="file_access_record_ids" widget="file_access_widget" nolabel="1"/>
                                 </div>
                             </div>
                         </page>

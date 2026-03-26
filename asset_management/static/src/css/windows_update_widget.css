@@ -78,6 +78,21 @@
 .wu-root .wu-win-q3 { background: #7fba00; border-radius: 0 0 0 2px; }
 .wu-root .wu-win-q4 { background: #ffb900; border-radius: 0 0 2px 0; }
 
+/* ── OS LOGOS (Linux / macOS) ──────────────────────────── */
+.wu-root .wu-os-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+.wu-root .wu-linux-icon,
+.wu-root .wu-macos-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
 .wu-root .wu-title {
     font-size: 16px;
     font-weight: 700;

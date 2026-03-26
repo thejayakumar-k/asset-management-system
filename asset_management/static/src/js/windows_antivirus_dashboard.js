@@ -131,6 +131,10 @@ class WindowsAntivirusDashboard extends Component {
             const kpis = await this.orm.call("antivirus.dashboard", "get_kpis_by_platform", ['windows']);
             Object.assign(this.state, kpis);
 
+            // Map protection counts (backend returns protected_count / unprotected_count)
+            this.state.protected_devices = kpis.protected_count || 0;
+            this.state.unprotected_devices = kpis.unprotected_count || 0;
+
             // Map threat counts
             this.state.total_threats = kpis.threats_count || 0;
             this.state.quarantined_threats = kpis.threats_quarantined || 0;

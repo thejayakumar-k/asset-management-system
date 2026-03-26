@@ -126,6 +126,8 @@ Professional Enterprise Asset Management System
         "views/asset_bulk_operations_views.xml",
         "views/asset_comparison_views.xml",
         "views/asset_windows_update_views.xml",
+        "views/asset_linux_update_views.xml",
+        "views/asset_macos_update_views.xml",
         "views/asset_file_access_views.xml",
         "views/antivirus.xml",
         "views/antivirus_ksc_view.xml",
@@ -203,6 +205,14 @@ Professional Enterprise Asset Management System
             "asset_management/static/src/xml/windows_update_widget.xml",
             "asset_management/static/src/js/windows_update_widget.js",
 
+            # Linux Update Widget components
+            "asset_management/static/src/xml/linux_update_widget.xml",
+            "asset_management/static/src/js/linux_update_widget.js",
+
+            # macOS Update Widget components
+            "asset_management/static/src/xml/macos_update_widget.xml",
+            "asset_management/static/src/js/macos_update_widget.js",
+
             # Antivirus Dashboard components (merged)
             "asset_management/static/src/xml/antivirus.xml",
             "asset_management/static/src/js/antivirus.js",
@@ -229,7 +239,7 @@ Professional Enterprise Asset Management System
             "asset_management/static/src/js/file_access_widget.js",
 
             # App Deployment (Package Manager Based - NEW)
-            "asset_management/static/src/css/app_deployment.scss",
+            "asset_management/static/src/css/app_deployment.css",
             "asset_management/static/src/xml/app_deployment.xml",
             "asset_management/static/src/js/app_deployment.js",
 
