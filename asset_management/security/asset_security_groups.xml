@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Asset User: Base internal user -->
+        <record id="group_asset_user" model="res.groups">
+            <field name="name">Asset User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Asset Manager: Inherits Asset User -->
+        <record id="group_asset_manager" model="res.groups">
+            <field name="name">Asset Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_asset_user'))]"/>
+        </record>
+
+        <!-- Asset Admin: Inherits Asset Manager -->
+        <record id="group_asset_admin" model="res.groups">
+            <field name="name">Asset Admin</field>
+            <field name="implied_ids" eval="[(4, ref('group_asset_manager'))]"/>
+        </record>
+    </data>
+</odoo>

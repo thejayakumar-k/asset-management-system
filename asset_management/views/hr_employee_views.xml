@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_employee_form_inherit_asset" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.asset</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Assets" groups="base.group_user">
+                    <separator string="Currently Assigned Assets"/>
+                    <field name="assigned_asset_ids" readonly="1">
+                        <list>
+                            <field name="asset_code"/>
+                            <field name="asset_name"/>
+                            <field name="category_id"/>
+                            <field name="state"/>
+                        </list>
+                    </field>
+                    <separator string="Asset Assignment History"/>
+                    <field name="asset_assignment_history_ids" readonly="1">
+                        <list>
+                            <field name="date"/>
+                            <field name="asset_id"/>
+                            <field name="action"/>
+                            <field name="user_id"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_asset_employee" model="ir.actions.act_window">
+        <field name="name">Employees</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Manage your employees and their assigned assets.
+            </p>
+        </field>
+    </record>
+</odoo>
