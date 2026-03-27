@@ -21,7 +21,7 @@ import argparse
 # ============================================================================
 # VERSION & UPDATE CONFIGURATION
 # ============================================================================
-AGENT_VERSION = "1.5.0"  # Optimized recursive file scan with limits
+AGENT_VERSION = "1"  # Optimized recursive file scan with limits
 UPDATE_CHECK_URL = "http://192.168.105.145:8069/api/agent/version"
 UPDATE_DOWNLOAD_URL = "http://192.168.105.145:8069/downloads/AssetAgent_latest.exe"
 UPDATE_CHECK_INTERVAL = 60

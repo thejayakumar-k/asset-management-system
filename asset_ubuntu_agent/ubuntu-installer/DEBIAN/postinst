@@ -1,0 +1,8 @@
+#!/bin/bash
+apt-get install -y python3-psutil python3-requests python3-dbus dmidecode lspci 2>/dev/null || true
+mkdir -p /var/log/asset-agent
+chmod +x /usr/local/bin/asset-agent/agent.py
+systemctl daemon-reload
+systemctl enable asset-agent.service
+systemctl start asset-agent.service
+exit 0

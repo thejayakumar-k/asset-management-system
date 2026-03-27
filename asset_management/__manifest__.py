@@ -1,6 +1,6 @@
 {
     "name": "Asset Management Pro",
-    "version": "19.0.2.1.7",
+    "version": "1.0",
     "summary": "Enterprise Asset Management with AI-Powered Agent Monitoring",
     "description": """
 Professional Enterprise Asset Management System
