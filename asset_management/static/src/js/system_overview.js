@@ -487,14 +487,71 @@ class SystemOverview extends Component {
         });
     }
 
-    openWindowsAssetsOnline() {
+    async openWindowsAssetsOnline() {
+        // Get heartbeat timeout and calculate cutoff time
+        const heartbeatTimeout = await this.orm.call('ir.config_parameter', 'get_param', ['asset_management.agent_heartbeat_timeout'], { default: '180' });
+        const timeout = parseInt(heartbeatTimeout, 10) || 180;
+        const cutoffTime = new Date();
+        cutoffTime.setSeconds(cutoffTime.getSeconds() - timeout);
+
+        // Format cutoff time as Odoo datetime string
+        const cutoffTimeStr = cutoffTime.toISOString().slice(0, 19).replace('T', ' ');
+
         this.action.doAction({
             type: 'ir.actions.act_window',
             name: 'Windows Assets (Online)',
             res_model: 'asset.asset',
-            domain: [['os_platform', '=', 'windows'], ['agent_status', '=', 'online']],
             view_mode: 'kanban,list,form',
             views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
+            domain: [
+                ['os_platform', '=', 'windows'],
+                ['last_sync_time', '!=', false],
+                ['last_sync_time', '>=', cutoffTimeStr]
+            ],
+            target: 'current',
+        });
+    }
+
+    async openLinuxAssetsOnline() {
+        const heartbeatTimeout = await this.orm.call('ir.config_parameter', 'get_param', ['asset_management.agent_heartbeat_timeout'], { default: '180' });
+        const timeout = parseInt(heartbeatTimeout, 10) || 180;
+        const cutoffTime = new Date();
+        cutoffTime.setSeconds(cutoffTime.getSeconds() - timeout);
+        const cutoffTimeStr = cutoffTime.toISOString().slice(0, 19).replace('T', ' ');
+
+        this.action.doAction({
+            type: 'ir.actions.act_window',
+            name: 'Linux Assets (Online)',
+            res_model: 'asset.asset',
+            view_mode: 'kanban,list,form',
+            views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
+            domain: [
+                ['os_platform', '=', 'linux'],
+                ['last_sync_time', '!=', false],
+                ['last_sync_time', '>=', cutoffTimeStr]
+            ],
+            target: 'current',
+        });
+    }
+
+    async openMacOSAssetsOnline() {
+        const heartbeatTimeout = await this.orm.call('ir.config_parameter', 'get_param', ['asset_management.agent_heartbeat_timeout'], { default: '180' });
+        const timeout = parseInt(heartbeatTimeout, 10) || 180;
+        const cutoffTime = new Date();
+        cutoffTime.setSeconds(cutoffTime.getSeconds() - timeout);
+        const cutoffTimeStr = cutoffTime.toISOString().slice(0, 19).replace('T', ' ');
+
+        this.action.doAction({
+            type: 'ir.actions.act_window',
+            name: 'macOS Assets (Online)',
+            res_model: 'asset.asset',
+            view_mode: 'kanban,list,form',
+            views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
+            domain: [
+                ['os_platform', '=', 'macos'],
+                ['last_sync_time', '!=', false],
+                ['last_sync_time', '>=', cutoffTimeStr]
+            ],
             target: 'current',
         });
     }
@@ -505,18 +562,6 @@ class SystemOverview extends Component {
             name: 'Windows Assets (Offline)',
             res_model: 'asset.asset',
             domain: [['os_platform', '=', 'windows'], ['agent_status', '=', 'offline']],
-            view_mode: 'kanban,list,form',
-            views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
-            target: 'current',
-        });
-    }
-
-    openLinuxAssetsOnline() {
-        this.action.doAction({
-            type: 'ir.actions.act_window',
-            name: 'Linux Assets (Online)',
-            res_model: 'asset.asset',
-            domain: [['os_platform', '=', 'linux'], ['agent_status', '=', 'online']],
             view_mode: 'kanban,list,form',
             views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
             target: 'current',
@@ -541,18 +586,6 @@ class SystemOverview extends Component {
             name: 'macOS Assets',
             res_model: 'asset.asset',
             domain: [['os_platform', '=', 'macos']],
-            view_mode: 'kanban,list,form',
-            views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
-            target: 'current',
-        });
-    }
-
-    openMacOSAssetsOnline() {
-        this.action.doAction({
-            type: 'ir.actions.act_window',
-            name: 'macOS Assets (Online)',
-            res_model: 'asset.asset',
-            domain: [['os_platform', '=', 'macos'], ['agent_status', '=', 'online']],
             view_mode: 'kanban,list,form',
             views: [[false, 'kanban'], [false, 'list'], [false, 'form']],
             target: 'current',
