@@ -371,12 +371,26 @@
                                 </div>
                             </t>
 
-                            <!-- DEVICE IMAGE (Default placeholder) -->
+                            <!-- DEVICE IMAGE (Dynamic based on type) -->
                             <div class="kanban_image_wrapper">
                                 <div class="kanban_image kanban_image_default">
-                                    <img src="/asset_management/static/src/img/asset_network_default.png"
-                                         alt="Default Network Device"
-                                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMTYwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2Y4ZjlmYSIvPjx0ZXh0IHg9IjEwMCIgeT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI1MCIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPvCfk7Y8L3RleHQ+PC9zdmc+';"/>
+                                    <t t-if="record.device_type.raw_value == 'router'">
+                                        <img src="/asset_management/static/src/img/asset_network_routers_default.png" alt="Router"/>
+                                    </t>
+                                    <t t-elif="record.device_type.raw_value == 'switch'">
+                                        <img src="/asset_management/static/src/img/asset_network_switches_default.png" alt="Switch"/>
+                                    </t>
+                                    <t t-elif="record.device_type.raw_value == 'firewall'">
+                                        <img src="/asset_management/static/src/img/asset_network_firewall_default.png" alt="Firewall"/>
+                                    </t>
+                                    <t t-elif="record.device_type.raw_value == 'access_point'">
+                                        <img src="/asset_management/static/src/img/asset_network_access_point_default.png" alt="Access Point"/>
+                                    </t>
+                                    <t t-else="">
+                                        <img src="/asset_management/static/src/img/asset_network_devices_default.png"
+                                             alt="Default Network Device"
+                                             onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMTYwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE2MCIgZmlsbD0iI2Y4ZjlmYSIvPjx0ZXh0IHg9IjEwMCIgeT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI1MCIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPvCfk7Y8L3RleHQ+PC9zdmc+';"/>
+                                    </t>
                                 </div>
                             </div>
 
