@@ -204,6 +204,12 @@
                   action="action_asset_category"
                   sequence="10"/>
 
+        <menuitem id="menu_repair_management"
+                  name="Repair Management"
+                  parent="menu_asset_root"
+                  action="action_repair_management"
+                  sequence="9"/>
+
 
     </data>
 </odoo>

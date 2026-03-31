@@ -99,3 +99,6 @@ access_asset_agent_user,asset.agent user,model_asset_agent,base.group_user,1,1,1
 access_asset_agent_manager,asset.agent manager,model_asset_agent,group_asset_manager,1,1,1,1
 access_asset_agent_admin,asset.agent admin,model_asset_agent,group_asset_admin,1,1,1,1
 access_antivirus_ksc_config,antivirus.ksc.config,model_antivirus_ksc_config,base.group_user,1,1,1,1
+access_repair_management_user,repair.management user,model_repair_management,group_asset_user,1,1,1,0
+access_repair_management_manager,repair.management manager,model_repair_management,group_asset_manager,1,1,1,1
+access_repair_management_admin,repair.management admin,model_repair_management,group_asset_admin,1,1,1,1

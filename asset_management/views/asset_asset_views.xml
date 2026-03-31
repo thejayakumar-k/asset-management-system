@@ -310,6 +310,12 @@
                                 context="{'search_default_asset_id': id, 'default_asset_id': id}">
                             <field name="network_device_count" widget="statinfo" string="Network Devices"/>
                         </button>
+                        <button name="action_view_repairs"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-wrench">
+                            <field name="repair_count" widget="statinfo" string="Repairs"/>
+                        </button>
                     </div>
 
                     <!-- CHANGE ALERT -->

@@ -356,6 +356,30 @@ class AssetAsset(models.Model):
         string="Maintenance History"
     )
 
+    repair_management_ids = fields.One2many(
+        "repair.management",
+        "asset_id",
+        string="Repair Requests"
+    )
+    repair_count = fields.Integer(
+        string="Repair Count", compute="_compute_repair_count",
+    )
+
+    def _compute_repair_count(self):
+        for asset in self:
+            asset.repair_count = len(asset.repair_management_ids)
+
+    def action_view_repairs(self):
+        self.ensure_one()
+        return {
+            'name': _('Repair Requests'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'repair.management',
+            'view_mode': 'list,form',
+            'domain': [('asset_id', '=', self.id)],
+            'context': {'default_asset_id': self.id},
+        }
+
     # =====================
     # LOCATION & MOVEMENT
     # =====================
@@ -1819,7 +1843,16 @@ class AssetAsset(models.Model):
         for asset in self:
             if asset.state != "assigned":
                 raise UserError(_("Only Assigned assets can go to Maintenance."))
-            asset.state = "maintenance"
+        return {
+            'name': _('Create Repair Request'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'repair.management',
+            'view_mode': 'form',
+            'target': 'current',
+            'context': {
+                'default_asset_id': self.id,
+            },
+        }
 
     def action_scrap(self):
         for asset in self:

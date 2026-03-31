@@ -90,6 +90,7 @@ Professional Enterprise Asset Management System
         "data/asset_sequence.xml",
         "data/asset_code_server_action.xml",
         "data/asset_maintenance_sequence.xml",
+        "data/repair_management_sequence.xml",
         "data/asset_camera_sequence.xml",
         "data/asset_agent_cron.xml",
         "data/asset_category_data.xml",
@@ -148,6 +149,11 @@ Professional Enterprise Asset Management System
         "views/online_assets_wizard_views.xml",
         "views/alerts_wizard_views.xml",
         "wizard/deploy_software_wizard_views.xml",
+
+        # ==========================================
+        # REPAIR MANAGEMENT
+        # ==========================================
+        "views/repair_management_views.xml",
 
         # ==========================================
         # MENUS (MUST BE LAST)

@@ -8,14 +8,17 @@
             <!-- Add notebook pages for History -->
             <xpath expr="//notebook" position="inside">
                 <page string="Maintenance History">
-                    <field name="maintenance_request_ids" readonly="1">
+                    <field name="repair_management_ids" readonly="1">
                         <list string="Maintenance History" create="false" delete="false">
-                            <field name="name" string="Name"/>
-                            <field name="maintenance_type" string="Maintenance Type"/>
-                            <field name="stage_id" string="Stage"/>
+                            <field name="name" string="Reference"/>
+                            <field name="issue_type" string="Issue Type"/>
+                            <field name="state" string="Status" widget="badge" 
+                                decoration-info="state == 'in_progress'" 
+                                decoration-success="state == 'done'" 
+                                decoration-danger="state == 'not_repairable'"/>
                             <field name="request_date" string="Request Date"/>
-                            <field name="close_date" string="Close Date"/>
-                            <field name="user_id" string="Responsible"/>
+                            <field name="resolution_date" string="Resolution Date"/>
+                            <field name="engineer_id" string="Assigned Engineer"/>
                         </list>
                     </field>
                 </page>

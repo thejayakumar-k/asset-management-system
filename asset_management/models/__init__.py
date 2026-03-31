@@ -21,6 +21,7 @@ from . import camera_monitor
 from . import network_device_interface
 from . import snmp_monitor
 from . import maintenance_request
+from . import repair_management
 
 # OS Update Management
 from . import asset_windows_update
