@@ -152,26 +152,6 @@ class AssetInstalledApplication(models.Model):
         }
 
 
-class AssetAuditLog(models.Model):
-    """Audit log for tracking asset-related actions."""
-    _name = 'asset.audit.log'
-    _description = 'Asset Audit Log'
-    _order = 'timestamp desc'
-
-    asset_id = fields.Many2one('asset.asset', string='Asset', required=True, ondelete='cascade')
-    action = fields.Selection([
-        ('uninstall_request', 'Uninstall Request'),
-        ('uninstall_success', 'Uninstall Success'),
-        ('uninstall_failed', 'Uninstall Failed'),
-        ('windows_update_lock', 'Windows Update Lock'),
-        ('folder_lock', 'Folder Lock'),
-        ('file_access_block', 'File Access Block'),
-    ], string='Action', required=True)
-    description = fields.Text(string='Description')
-    user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.uid)
-    timestamp = fields.Datetime(string='Timestamp', default=fields.Datetime.now)
-
-
 class AssetAppUninstallWizard(models.TransientModel):
     """Wizard for confirming application uninstall."""
     _name = 'asset.app.uninstall.wizard'

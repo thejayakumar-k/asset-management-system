@@ -1,26 +1,38 @@
 def migrate(cr, version):
     """
-    Pre-migration: Clean up old view definitions that reference removed fields.
-    
-    This runs BEFORE the model definitions are loaded, preventing validation errors.
-    Removes cached arch_db for views referencing removed Asset Governance fields.
+    Pre-migration: Clean up stale inherited view definitions that reference removed fields.
+
+    This runs BEFORE data files are loaded, preventing view validation errors such as:
+      "action_open_repairs is not a valid action on asset.asset"
+
+    The inherited view 'view_asset_asset_form_inherit_extra' may exist in the database
+    with old content (repair smart button, repair_ids page) from a previous module version.
+    Deleting it here allows the upgrade to recreate it cleanly from the current XML file.
     """
     if not version:
         return
-    
+
     try:
-        # Reset arch_db (compiled view cache) to NULL for all asset.asset views
-        # This forces Odoo to recompile from XML, which no longer has the removed fields
+        # Find and delete the stale inherited view that references removed repair fields.
+        # The view will be recreated with correct content when asset_asset_extended_views.xml
+        # is processed during the upgrade.
         cr.execute("""
-            UPDATE ir_ui_view
-            SET arch_db = NULL
-            WHERE model = 'asset.asset'
+            DELETE FROM ir_model_data
+            WHERE model = 'ir.ui.view'
+              AND module = 'asset_management'
+              AND name = 'view_asset_asset_form_inherit_extra'
         """)
-        
+
+        cr.execute("""
+            DELETE FROM ir_ui_view
+            WHERE model = 'asset.asset'
+              AND name = 'asset.asset.form.inherit.extra'
+              AND arch_db::text LIKE '%action_open_repairs%'
+        """)
+
         cr.commit()
-    except Exception as e:
-        # Silently continue if table doesn't exist or other error occurs
+    except Exception:
         try:
             cr.rollback()
-        except:
+        except Exception:
             pass

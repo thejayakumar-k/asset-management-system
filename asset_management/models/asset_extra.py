@@ -143,7 +143,16 @@ class AssetAuditLog(models.Model):
         ('assignment', 'Asset Assignment'),
         ('status', 'Status Change'),
         ('location', 'Location Change')
-    ], string='Log Type', required=True)
+    ], string='Log Type')
+    action = fields.Selection([
+        ('uninstall_request', 'Uninstall Request'),
+        ('uninstall_success', 'Uninstall Success'),
+        ('uninstall_failed', 'Uninstall Failed'),
+        ('windows_update_lock', 'Windows Update Lock'),
+        ('folder_lock', 'Folder Lock'),
+        ('file_access_block', 'File Access Block'),
+    ], string='Action')
     old_value = fields.Char(string='Old Value')
     new_value = fields.Char(string='New Value')
     description = fields.Text(string='Description')
+    timestamp = fields.Datetime(string='Timestamp', default=fields.Datetime.now)
