@@ -4251,6 +4251,13 @@ def main():
         logger.info(f"Serial: {serial}")
         logger.info(f"Version: {AGENT_VERSION}")
 
+        # Location detection
+        location = get_location_data()
+        if location.get("location_latitude") and location.get("location_longitude"):
+            logger.info(f"Location: {location['location_latitude']}, {location['location_longitude']} (Source: {location['location_source']})")
+        else:
+            logger.warning("Location: Location unavailable")
+
         # Initial static sync
         logger.info("Performing initial static sync...")
         try:
