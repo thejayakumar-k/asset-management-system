@@ -10,7 +10,10 @@ a = Analysis(
     hiddenimports=[
         'winrt.windows.devices.geolocation',
         'winrt.windows.foundation',
+        'winrt.windows.foundation.collections',
         'winrt.runtime',
+        'winrt.system',
+        'winrt._winrt',
         'requests',
         'psutil',
         'tkinter',
