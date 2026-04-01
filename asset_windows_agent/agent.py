@@ -19,11 +19,15 @@ import sys
 import argparse
 
 # ============================================================================
-# VERSION & UPDATE CONFIGURATION
+# VERSION & SERVER CONFIGURATION
 # ============================================================================
 AGENT_VERSION = "1"  # Optimized recursive file scan with limits
-UPDATE_CHECK_URL = "http://192.168.105.145:8069/api/agent/version"
-UPDATE_DOWNLOAD_URL = "http://192.168.105.145:8069/downloads/AssetAgent_latest.exe"
+DEFAULT_SERVER_IP = "192.168.105.145"
+DEFAULT_SERVER_PORT = "8069"
+SERVER_BASE_URL = f"http://{DEFAULT_SERVER_IP}:{DEFAULT_SERVER_PORT}"
+
+UPDATE_CHECK_URL = f"{SERVER_BASE_URL}/api/agent/version"
+UPDATE_DOWNLOAD_URL = f"{SERVER_BASE_URL}/downloads/AssetAgent_latest.exe"
 UPDATE_CHECK_INTERVAL = 60
 
 # ============================================================================
@@ -56,7 +60,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # ODOO API CONFIGURATION
 # ============================================================================
-ODOO_API_URL = "http://192.168.105.145:8069/api/laptop_monitor"
+ODOO_API_URL = f"{SERVER_BASE_URL}/api/laptop_monitor"
 ODOO_DB_NAME = "odoo19"  # Must match db_name in odoo.conf
 ODOO_HEADERS = {
     "Content-Type": "application/json",
@@ -69,13 +73,13 @@ SHOW_UI = False
 # ============================================================================
 # WINDOWS UPDATE CONFIGURATION
 # ============================================================================
-WINDOWS_UPDATE_BASE_URL = "http://192.168.105.145:8069/api/asset/updates"
+WINDOWS_UPDATE_BASE_URL = f"{SERVER_BASE_URL}/api/asset/updates"
 WINDOWS_UPDATE_SYNC_INTERVAL = 60  # 1 minute for testing (change to 300 for production)
 
 # ============================================================================
 # FILE ACCESS POLICY CONFIGURATION
 # ============================================================================
-FILE_ACCESS_BASE_URL      = "http://192.168.105.145:8069/api/asset/file_access"
+FILE_ACCESS_BASE_URL      = f"{SERVER_BASE_URL}/api/asset/file_access"
 FILE_ACCESS_SYNC_INTERVAL = 60   # Poll policy from Odoo every 60 seconds
 
 def get_monitored_folders():
@@ -90,19 +94,19 @@ def get_monitored_folders():
 # ============================================================================
 # ANTIVIRUS DEPLOYMENT CONFIGURATION
 # ============================================================================
-ANTIVIRUS_BASE_URL = "http://192.168.105.145:8069/api/antivirus"
+ANTIVIRUS_BASE_URL = f"{SERVER_BASE_URL}/api/antivirus"
 ANTIVIRUS_POLL_INTERVAL = 30  # Poll every 30 seconds
 
 # ============================================================================
 # SOFTWARE DEPLOYMENT CONFIGURATION
 # ============================================================================
-SOFTWARE_BASE_URL = "http://192.168.105.145:8069/api/asset/software"
+SOFTWARE_BASE_URL = f"{SERVER_BASE_URL}/api/asset/software"
 SOFTWARE_SYNC_INTERVAL = 30  # Poll every 30 seconds
 
 # ============================================================================
 # APP DEPLOYMENT CONFIGURATION (package-manager-based)
 # ============================================================================
-APP_DEPLOY_BASE_URL = "http://192.168.105.145:8069/asset_management/api/agent"
+APP_DEPLOY_BASE_URL = f"{SERVER_BASE_URL}/asset_management/api/agent"
 APP_DEPLOY_POLL_INTERVAL = 30  # Poll every 30 seconds
 
 # ============================================================================
@@ -378,44 +382,70 @@ def get_mac_address():
 # ============================================================================
 
 def get_location_data():
-    """Get location using Windows Location Service (WinRT) with caching"""
+    """Get location using Windows Location Service (winsdk) with caching"""
     global _cached_location, _last_location_fetch
     current_time = time.time()
+    
     with _cache_lock:
         if _cached_location and (current_time - _last_location_fetch < 1800):
             return _cached_location
+
+    default_result = {
+        "public_ip": "", 
+        "location_country": "", 
+        "location_region": "",
+        "location_city": "", 
+        "location_latitude": 0.0, 
+        "location_longitude": 0.0,
+        "location_source": "unavailable"
+    }
+
     try:
         try:
-            from winrt.windows.devices.geolocation import Geolocator, PositionStatus
+            from winsdk.windows.devices.geolocation import Geolocator, PositionStatus
             import asyncio
         except ImportError:
-            logger.warning("Windows Location API not available (winrt not installed)")
-            result = {"public_ip": "", "location_country": "", "location_region": "",
-                      "location_city": "", "location_latitude": 0.0, "location_longitude": 0.0,
-                      "location_source": "unavailable"}
+            logger.warning("Windows Location API not available (winsdk not installed)")
             with _cache_lock:
-                _cached_location = result
+                _cached_location = default_result
                 _last_location_fetch = current_time
-            return result
+            return default_result
 
         async def get_windows_location():
             try:
                 geolocator = Geolocator()
                 status = geolocator.location_status
-                if status == PositionStatus.DISABLED or status == PositionStatus.NOT_AVAILABLE:
-                    return {"public_ip": "", "location_country": "", "location_region": "",
-                            "location_city": "", "location_latitude": 0.0, "location_longitude": 0.0,
-                            "location_source": "disabled"}
-                position = await asyncio.wait_for(geolocator.get_geoposition_async(), timeout=10.0)
-                latitude = position.coordinate.point.position.latitude
-                longitude = position.coordinate.point.position.longitude
-                return {"public_ip": "", "location_country": "", "location_region": "",
-                        "location_city": "", "location_latitude": float(latitude),
-                        "location_longitude": float(longitude), "location_source": "windows"}
-            except Exception:
-                return {"public_ip": "", "location_country": "", "location_region": "",
-                        "location_city": "", "location_latitude": 0.0, "location_longitude": 0.0,
-                        "location_source": "disabled"}
+                
+                if status == PositionStatus.DISABLED:
+                    logger.warning("Windows Location Service is disabled.")
+                    return {**default_result, "location_source": "disabled"}
+                elif status == PositionStatus.NOT_AVAILABLE:
+                    logger.warning("Windows Location Service is not available.")
+                    return {**default_result, "location_source": "unavailable"}
+                
+                try:
+                    position_op = geolocator.get_geoposition_async()
+                    position = await asyncio.wait_for(position_op, timeout=10.0)
+                    
+                    latitude = position.coordinate.point.position.latitude
+                    longitude = position.coordinate.point.position.longitude
+                    
+                    return {
+                        **default_result,
+                        "location_latitude": float(latitude),
+                        "location_longitude": float(longitude),
+                        "location_source": "windows"
+                    }
+                except asyncio.TimeoutError:
+                    logger.warning("Windows Location request timed out.")
+                    return {**default_result, "location_source": "timeout"}
+                except Exception as e:
+                    logger.warning(f"Error getting geoposition: {e}")
+                    return {**default_result, "location_source": "error"}
+                    
+            except Exception as e:
+                logger.error(f"Internal error in get_windows_location: {e}")
+                return default_result
 
         try:
             try:
@@ -429,28 +459,25 @@ def get_location_data():
                     result = loop.run_until_complete(get_windows_location())
             except RuntimeError:
                 result = asyncio.run(get_windows_location())
+            
             with _cache_lock:
                 _cached_location = result
                 _last_location_fetch = current_time
             return result
+            
         except Exception as e:
             logger.warning(f"Error running Windows Location Service: {e}")
-            result = {"public_ip": "", "location_country": "", "location_region": "",
-                      "location_city": "", "location_latitude": 0.0, "location_longitude": 0.0,
-                      "location_source": "unavailable"}
             with _cache_lock:
-                _cached_location = result
+                _cached_location = default_result
                 _last_location_fetch = current_time
-            return result
+            return default_result
+
     except Exception as e:
         logger.error(f"Unexpected error in location detection: {e}")
-        result = {"public_ip": "", "location_country": "", "location_region": "",
-                  "location_city": "", "location_latitude": 0.0, "location_longitude": 0.0,
-                  "location_source": "unavailable"}
         with _cache_lock:
-            _cached_location = result
+            _cached_location = default_result
             _last_location_fetch = current_time
-        return result
+        return default_result
 
 
 # ============================================================================
@@ -4164,6 +4191,39 @@ def app_deployment_sync_loop():
         time.sleep(APP_DEPLOY_POLL_INTERVAL)
 
 
+def update_server_config(new_server):
+    """Update global API URLs based on a new server IP or URL."""
+    global SERVER_BASE_URL, UPDATE_CHECK_URL, UPDATE_DOWNLOAD_URL, ODOO_API_URL
+    global WINDOWS_UPDATE_BASE_URL, FILE_ACCESS_BASE_URL, ANTIVIRUS_BASE_URL
+    global SOFTWARE_BASE_URL, APP_DEPLOY_BASE_URL
+
+    if not new_server:
+        return
+
+    # Normalize to include http:// protocol if missing
+    if not new_server.startswith(('http://', 'https://')):
+        # If it's just an IP/hostname, add http and default port
+        if ':' not in new_server:
+            new_server = f"http://{new_server}:{DEFAULT_SERVER_PORT}"
+        else:
+            new_server = f"http://{new_server}"
+    
+    server_url = new_server.rstrip('/')
+    SERVER_BASE_URL = server_url
+    
+    # Update derived constants
+    UPDATE_CHECK_URL = f"{SERVER_BASE_URL}/api/agent/version"
+    UPDATE_DOWNLOAD_URL = f"{SERVER_BASE_URL}/downloads/AssetAgent_latest.exe"
+    ODOO_API_URL = f"{SERVER_BASE_URL}/api/laptop_monitor"
+    WINDOWS_UPDATE_BASE_URL = f"{SERVER_BASE_URL}/api/asset/updates"
+    FILE_ACCESS_BASE_URL = f"{SERVER_BASE_URL}/api/asset/file_access"
+    ANTIVIRUS_BASE_URL = f"{SERVER_BASE_URL}/api/antivirus"
+    SOFTWARE_BASE_URL = f"{SERVER_BASE_URL}/api/asset/software"
+    APP_DEPLOY_BASE_URL = f"{SERVER_BASE_URL}/asset_management/api/agent"
+    
+    logger.info(f"Server configuration updated to: {SERVER_BASE_URL}")
+
+
 # ============================================================================
 # MAIN
 # ============================================================================
@@ -4174,8 +4234,12 @@ def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description="Asset Agent")
     parser.add_argument("--ui", action="store_true", help="Enable the graphical user interface")
+    parser.add_argument("--server", "-s", help="Server URL or IP (e.g., http://my-ngrok.ngrok.io or 10.0.0.5)")
     args, unknown = parser.parse_known_args()
     
+    if args.server:
+        update_server_config(args.server)
+
     if args.ui:
         SHOW_UI = True
 
