@@ -102,3 +102,9 @@ access_antivirus_ksc_config,antivirus.ksc.config,model_antivirus_ksc_config,base
 access_repair_management_user,repair.management user,model_repair_management,group_asset_user,1,1,1,0
 access_repair_management_manager,repair.management manager,model_repair_management,group_asset_manager,1,1,1,1
 access_repair_management_admin,repair.management admin,model_repair_management,group_asset_admin,1,1,1,1
+access_camera_event_user,camera.event user,model_camera_event,group_asset_user,1,1,1,0
+access_camera_event_manager,camera.event manager,model_camera_event,group_asset_manager,1,1,1,1
+access_camera_event_admin,camera.event admin,model_camera_event,group_asset_admin,1,1,1,1
+access_camera_monitor_service_user,camera.monitor.service user,model_camera_monitor_service,group_asset_user,1,0,0,0
+access_camera_monitor_service_manager,camera.monitor.service manager,model_camera_monitor_service,group_asset_manager,1,1,1,1
+access_camera_monitor_service_admin,camera.monitor.service admin,model_camera_monitor_service,group_asset_admin,1,1,1,1
